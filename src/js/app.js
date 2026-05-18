@@ -772,6 +772,15 @@ function renderGrid(orgs){
       ${ghm}
     </div>`;
   }).join('');
+  g.querySelectorAll('[data-filtered-idx]').forEach(card => {
+    const idx = Number(card.dataset.filteredIdx);
+    card.addEventListener('mouseenter', () => {
+      focusedIdx = idx;
+    });
+    card.addEventListener('focus', () => {
+      focusedIdx = idx;
+    });
+  });
 }
 
 function updateStats(){
@@ -812,22 +821,22 @@ document.addEventListener('keydown',e=>{
     e.preventDefault();
     focusedIdx=Math.min(focusedIdx+1,n-1);
     if(focusedIdx<0)focusedIdx=0;
-    scrollToFocused();renderGrid(filteredOrgs);
+    renderGrid(filteredOrgs);scrollToFocused();
   } else if(e.key==='ArrowLeft'){
     e.preventDefault();
     focusedIdx=Math.max(focusedIdx-1,0);
     if(focusedIdx<0)focusedIdx=0;
-    scrollToFocused();renderGrid(filteredOrgs);
+    renderGrid(filteredOrgs);scrollToFocused();
   } else if(e.key==='ArrowDown'){
     e.preventDefault();
     if(focusedIdx<0)focusedIdx=0;
     else focusedIdx=Math.min(focusedIdx+cols,n-1);
-    scrollToFocused();renderGrid(filteredOrgs);
+    renderGrid(filteredOrgs);scrollToFocused();
   } else if(e.key==='ArrowUp'){
     e.preventDefault();
     if(focusedIdx<0)focusedIdx=0;
     else focusedIdx=Math.max(focusedIdx-cols,0);
-    scrollToFocused();renderGrid(filteredOrgs);
+    renderGrid(filteredOrgs);scrollToFocused();
   } else if(e.key==='Enter'&&focusedIdx>=0&&focusedIdx<n){
     openModal(ORGS.indexOf(filteredOrgs[focusedIdx]));
   } else if((e.key==='c'||e.key==='C')&&focusedIdx>=0&&focusedIdx<n){
@@ -843,7 +852,10 @@ function scrollToFocused(){
   setTimeout(()=>{
     const g=document.getElementById('orgGrid');
     const card=g?.querySelector(`[data-filtered-idx="${focusedIdx}"]`);
+    if(card){
+      card.focus({ preventScroll: true });
     if(card)card.scrollIntoView({block:'nearest',behavior:'smooth'});
+    }
   },30);
 }
 
